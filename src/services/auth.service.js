@@ -101,7 +101,7 @@ const restrictTo = (...roles) => (req, res, next) => {
   next();
 };
 
-exports.protect = catchAsync(async (req, res, next) => {
+const protect = catchAsync(async (req, res, next) => {
   // Get token from header or cookies
   let token;
 
@@ -143,5 +143,6 @@ module.exports = {
   refreshAuth,
   resetPassword,
   verifyEmail,
-  restrictTo
+  restrictTo,
+  protect
 };

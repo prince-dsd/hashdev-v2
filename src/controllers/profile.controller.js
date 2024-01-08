@@ -1,4 +1,4 @@
-const commonService = require('../services');
+const { commonService } = require('../services');
 const { User, Profile } = require('../models');
 const { ApiError, catchAsync, multerUpload } = require('../utils');
 

@@ -7,3 +7,5 @@ exports.normalizeUrls = fields =>
             .if(body(field).exists())
             .customSanitizer(value => value && normalize(value, { forceHttps: true })),
     );
+
+exports.fieldRequired = (field, message = 'Field required') => body(field, message).notEmpty();

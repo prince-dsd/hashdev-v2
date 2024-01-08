@@ -1,23 +1,47 @@
 const express = require('express');
-const auth = require('../../middlewares/auth');
-const { validate } = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const userController = require('../../controllers/user.controller');
+const { userController } = require('../../controllers');
+const { authService } = require('../../services')
+const { userValidation } = require('../../validations');
+const profileRouter = require('./profile.route');
 
 const router = express.Router();
 
+// Use the profile router for /:userId/profile route after /user
+router.use('/:userId/profile', profileRouter);
+
+// All routes after this middleware are protected
+router.use(authService.protect);
+
+router
+  .route('/me')
+  .get(userController.getIdFromCurrentUser, userController.getUser)
+  .patch(
+    authService.restrictTo('admin', 'user'),
+    userController.getIdFromCurrentUser,
+    userValidation.updateUser,
+    userController.updateUser,
+  )
+  .delete(
+    authService.restrictTo('admin', 'user'),
+    userController.getIdFromCurrentUser,
+    userController.deleteUser,
+  );
+
+router.route('/watching').get(userController.getIdFromCurrentUser, userController.getWatching);
+router.route('/likes').get(userController.getIdFromCurrentUser, userController.getLikes);
+
+// Restrict the following routes to users with role admin only
+router.use(authService.restrictTo('admin'));
+
 router
   .route('/')
-  .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
-
-router
-  .route('/:userId')
-  .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
-  .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+  .get(userController.getUser)
+  .post(userController.createUserAdmin)
+  .patch(userController.updateUserAdmin)
+  .delete(userController.deleteUser);
 
 module.exports = router;
+
 
 /**
  * @swagger

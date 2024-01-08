@@ -120,3 +120,18 @@ exports.getAll = (Model, errorMessage = 'No document found with that ID') =>
             },
         });
     });
+
+exports.getOneById = (Model, config = {}) =>
+    catchAsync(async (req, res, next) => {
+        getOne(req, res, next, Model, config, { _id: req.params.id });
+    });
+
+exports.updateOneById = (Model, config = {}) =>
+    catchAsync(async (req, res, next) =>
+        updateOne(req, res, next, Model, config, { _id: req.params.id }),
+    );
+
+exports.deleteOneById = (Model, config = {}) =>
+    catchAsync(async (req, res, next) => {
+        deleteOne(req, res, next, Model, config, { _id: req.params.id });
+    });

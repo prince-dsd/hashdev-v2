@@ -87,3 +87,10 @@ router
     .delete(profileController.deleteProfile);
 
 module.exports = router;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Profile
+ *   description: Profile management and retrieval
+ */

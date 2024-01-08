@@ -1,43 +1,83 @@
-const httpStatus = require('http-status');
-const pick = require('../utils/pick');
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
-const { userService } = require('../services');
+const { User, Profile } = require('../models');
+const { commonService } = require('../services');
+const { AppError, catchAsync } = require('../utils');
 
-const createUser = catchAsync(async (req, res) => {
-  const user = await userService.createUser(req.body);
-  res.status(httpStatus.CREATED).send(user);
-});
+exports.getUser = commonService.getOneById(User);
+exports.createUserAdmin = commonService.createOne(User);
+exports.updateUserAdmin = commonService.updateOneById(User);
+exports.deleteUser = commonService.deleteOneById(User);
 
-const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await userService.queryUsers(filter, options);
-  res.send(result);
-});
-
-const getUser = catchAsync(async (req, res) => {
-  const user = await userService.getUserById(req.params.userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  res.send(user);
-});
-
-const updateUser = catchAsync(async (req, res) => {
-  const user = await userService.updateUserById(req.params.userId, req.body);
-  res.send(user);
-});
-
-const deleteUser = catchAsync(async (req, res) => {
-  await userService.deleteUserById(req.params.userId);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
-module.exports = {
-  createUser,
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
+exports.getIdFromCurrentUser = (req, _res, next) => {
+  req.params.id = req.user.id;
+  next();
 };
+
+// Allows updating of name, email & active status
+exports.updateUser = catchAsync(async (req, res, next) => {
+  const { name, email, username, password, password2, active } = req.body;
+  const user = await User.findById(req.params.id);
+
+  // Create error if user sends password data
+  if (password || password2) {
+    return next(
+      new AppError(
+        'This route is not for password updates. Please use /auth/update-password.',
+        400,
+      ),
+    );
+  }
+
+  if (name && name !== user.name) user.name = name;
+
+  if (username && username !== user.username) {
+    if (await User.findOne({ username })) {
+      return next(new AppError('This username is already taken!', 400));
+    }
+    user.username = username;
+  }
+
+  if (email && email !== user.email) {
+    if (await User.findOne({ email })) {
+      return next(new AppError('This email is already taken!', 400));
+    }
+    user.email = email;
+  }
+
+  if ('active' in req.body) {
+    await Profile.findByIdAndUpdate(user.profile, { active });
+    user.active = active;
+  }
+
+  user.save();
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
+// eslint-disable-next-line no-unused-vars
+exports.getWatching = catchAsync(async (req, res, _next) => {
+  const { watching } = await User.findById(req.params.id).populate('watching');
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      watching,
+    },
+  });
+});
+
+// eslint-disable-next-line no-unused-vars
+exports.getLikes = catchAsync(async (req, res, _next) => {
+  const { likes } = await User.findById(req.params.id).populate('likes');
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      likes,
+    },
+  });
+});
