@@ -1,8 +1,11 @@
 const httpStatus = require('http-status');
+const { promisify } = require('util');
+const jwt = require('jsonwebtoken');
 const tokenService = require('./token.service');
 const userService = require('./user.service');
-const Token = require('../models/token.model');
-const ApiError = require('../utils/ApiError');
+const { Token, User } = require('../models');
+const { ApiError, catchAsync } = require('../utils');
+
 const { tokenTypes } = require('../config/tokens');
 
 /**
@@ -90,10 +93,55 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
+const restrictTo = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return next(new ApiError(httpStatus.FORBIDDEN, 'You do not have permission to perform this action'));
+  }
+
+  next();
+};
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // Get token from header or cookies
+  let token;
+
+  if (req.header('Authorization') && req.header('Authorization').startsWith('Bearer')) {
+    // Remove bearer from token
+    // eslint-disable-next-line prefer-destructuring
+    token = req.header('Authorization').split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  // Check if token exists
+  if (!token) {
+    return next(new ApiError('You are not signed in! Please sign in to gain access.', 401));
+  }
+
+  // Verify token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // Get user and check if user still exists
+  const user = await User.findById(decoded.id).select('-created_at -passwordChangedAt');
+
+  if (!user) {
+    return next(new ApiError('The user belonging to this token no longer exists', 401));
+  }
+
+  // Check if user has changed password since token was issued
+  if (user.changedPasswordSinceJWT(decoded.iat)) {
+    return next(new ApiError('User recently changed password! Please sign again.', 401));
+  }
+
+  req.user = user;
+  next();
+});
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   resetPassword,
   verifyEmail,
+  restrictTo
 };
