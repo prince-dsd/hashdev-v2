@@ -114,10 +114,83 @@ module.exports = router;
  *        content: 
  *         application/json:
  *          schema:
- *            $ref:'#/components/schemas/Profile'
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
  *      "403":
  *         $ref: '#/components/responses/Forbidden'
  *      "404":
  *         $ref: '#/components/responses/NotFound'
+ */
 
+/**
+ * @swagger
+ * /profile/all:
+ *   get:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     parameters:
+ *       - in: query
+ *         name: active
+ *         schema:
+ *             type: string
+ *         description: Status of user
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *             type: string
+ *         description: Limit of result
+ *       - in: query
+ *         name: page
+ *         schema:
+ *             type: string
+ *         description: Page number
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *             type: string
+ *         description: Sorting parameter
+ * 
+ *     responses:
+ *      "200":
+ *        description: OK
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+
+
+/**
+ * @swagger
+ * /profile/me:
+ *   get:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ * 
+ *     responses:
+ *      "200":
+ *        description: OK
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
  */

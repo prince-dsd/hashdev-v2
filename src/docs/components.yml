@@ -19,6 +19,20 @@ components:
         name: fake name
         role: user
 
+    Profile:
+      type: object
+      properties: 
+        id:
+          type: string
+        active:
+          type: string
+        availablity:
+          type: string
+        avatar: 
+          type: string
+        bio:
+          type: string
+
     Token:
       type: object
       properties:
