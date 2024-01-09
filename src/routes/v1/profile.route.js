@@ -94,3 +94,30 @@ module.exports = router;
  *   name: Profile
  *   description: Profile management and retrieval
  */
+
+/**
+ * @swagger
+ * /profile:
+ *   get:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     parameters:
+ *       - in: query
+ *         name: username
+ *         schema:
+ *             type: string
+ *         description: User name
+ * 
+ *     responses:
+ *      "200":
+ *        description: OK
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            $ref:'#/components/schemas/Profile'
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+
+ */
