@@ -1,4 +1,5 @@
 module.exports = {
+    root: true,
     extends: ['airbnb', 'airbnb/hooks', 'prettier/react', 'prettier'],
     plugins: ['prettier'],
     parser: 'babel-eslint',
@@ -26,7 +27,7 @@ module.exports = {
         'no-underscore-dangle': 0,
         'no-console': [2, { allow: ['warn', 'error'] }],
         'no-use-before-define': 0,
-        
+
 
         // React Rules
         'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx'] }],
