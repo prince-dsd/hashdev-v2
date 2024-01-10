@@ -200,16 +200,181 @@ module.exports = router;
  * @swagger
  * /profile/me:
  *   post:
- *     summary: Create
+ *     summary: get profile for user
  *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
- *           schema: 
- *              type: object
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *           properties:
+ *             name:
+ *               type: string
+ * 
+ *     responses:
+ *      "201":
+ *        description: Created
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /profile/me:
+ *   patch:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *           properties:
+ *             name:
+ *               type: string
+ * 
+ *     responses:
+ *      "201":
+ *        description: Created
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /profile/portfolio:
+ *   post:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *           properties:
+ *             name:
+ *               type: string
+ * 
+ *     responses:
+ *      "201":
+ *        description: Created
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /profile/{id}/star:
+ *   patch:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ * 
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *          type: string
+ *         description: Profile id to update
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *           properties:
+ *             name:
+ *               type: string
+ * 
+ *     responses:
+ *      "201":
+ *        description: Created
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /profile/{id}/watch:
+ *   patch:
+ *     summary: get profile for user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ * 
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *          type: string
+ *         description: Profile id to update
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *           properties:
+ *             name:
+ *               type: string
  * 
  *     responses:
  *      "201":
