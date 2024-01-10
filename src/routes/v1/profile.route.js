@@ -194,3 +194,35 @@ module.exports = router;
  *      "404":
  *         $ref: '#/components/responses/NotFound'
  */
+
+
+/**
+ * @swagger
+ * /profile/me:
+ *   post:
+ *     summary: Create
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json
+ *           schema: 
+ *              type: object
+ * 
+ *     responses:
+ *      "201":
+ *        description: Created
+ *        content: 
+ *         application/json:
+ *          schema:
+ *            type: object
+ *          properties:
+ *           data:
+ *             type: object
+ *      "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *      "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
