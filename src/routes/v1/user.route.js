@@ -52,7 +52,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /users:
+ * /users/{:userId}/profile:
  *   post:
  *     summary: Create a user
  *     description: Only admins can create other users.
