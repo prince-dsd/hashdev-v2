@@ -2,23 +2,35 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
 
+const jwtExpiryMilliseconds = process.env.JWT_EXPIRES_MINUTES * 60 * 1000;
+
+const cookieOptions = {
+  expires: new Date(Date.now() + jwtExpiryMilliseconds),
+  httpOnly: true,
+  sameSite: 'strict',
+};
+
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
+
 const login = catchAsync(async (req, res) => {
   const { userId, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(userId, password);
   const tokens = await tokenService.generateAuthTokens(user);
-  const jwtExpiryMilliseconds = process.env.JWT_EXPIRES_MINUTES * 60 * 1000;
 
-  const cookieOptions = {
-    expires: new Date(Date.now() + jwtExpiryMilliseconds),
-    httpOnly: true,
-    sameSite: 'strict',
-  };
+  res.cookie('jwt', tokens.access.token, cookieOptions);
+  res.send({ user, tokens });
+});
+
+const updatePassword = catchAsync(async (req, res) => {
+  const { userId, password } = req.body;
+  const user = await authService.updatePasswordWithID(userId, password)
+  const tokens = await tokenService.generateAuthTokens(user);
+  // Create and send JWT
   res.cookie('jwt', tokens.access.token, cookieOptions);
   res.send({ user, tokens });
 });
@@ -58,6 +70,7 @@ const verifyEmail = catchAsync(async (req, res) => {
 module.exports = {
   register,
   login,
+  updatePassword,
   logout,
   refreshTokens,
   forgotPassword,
