@@ -25,7 +25,7 @@ exports.deleteProfile = commonService.deleteOneByUserId(Profile, { errorMessage:
 
 exports.createProfile = catchAsync(async (req, res, next) => {
     if (await Profile.findOne({ user: req.params.userId })) {
-        return next(new ApiError(400, 'Profile already exists for this user'));
+        return next(new ApiError('Profile already exists for this user', 400));
     }
 
     const profile = await Profile.create({
@@ -34,7 +34,7 @@ exports.createProfile = catchAsync(async (req, res, next) => {
     });
 
     if (!profile) {
-        return next(new ApiError(400, 'Unable to create profile'));
+        return next(new ApiError('Unable to create profile', 400));
     }
 
     // Add profile reference to user
@@ -85,7 +85,7 @@ exports.addPortfolioItem = catchAsync(async (req, res, next) => {
     );
 
     if (!profile) {
-        return next(new ApiError(404, notFoundErrorMessage));
+        return next(new ApiError(notFoundErrorMessage, 404));
     }
 
     res.status(200).json({
@@ -101,14 +101,14 @@ exports.addPortfolioItem = catchAsync(async (req, res, next) => {
 exports.updatePortfolioItem = catchAsync(async (req, res, next) => {
     const profile = await Profile.findOne({ user: req.params.userId });
     if (!profile) {
-        return next(new ApiError(404, notFoundErrorMessage));
+        return next(new ApiError(notFoundErrorMessage, 404));
     }
 
     // Get portfolio item
     const itemIndex = profile.portfolio.map(item => item.id).indexOf(req.params.portId);
 
     if (itemIndex === -1) {
-        return next(new ApiError(404, 'Portfolio item not found'));
+        return next(new ApiError('Portfolio item not found', 404));
     }
 
     // Create the new images array after uploads and deletions
@@ -143,13 +143,13 @@ exports.removePortfolioItem = catchAsync(async (req, res, next) => {
     const profile = await Profile.findOne({ user: req.params.userId });
 
     if (!profile) {
-        return next(new ApiError(404, notFoundErrorMessage));
+        return next(new ApiError(notFoundErrorMessage, 404));
     }
 
     // Get remove index and splice from education array
     const removeIndex = profile.portfolio.map(item => item.id).indexOf(req.params.portId);
     if (removeIndex === -1) {
-        return next(new ApiError(404, 'Portfolio item not found'));
+        return next(new ApiError('Portfolio item not found', 404));
     }
 
     profile.portfolio.splice(removeIndex, 1);
@@ -170,10 +170,10 @@ exports.toggleStar = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
 
     if (!profile) {
-        return next(new ApiError(404, notFoundErrorMessage));
+        return next(new ApiError(notFoundErrorMessage, 404));
     }
     if (!user) {
-        return next(new ApiError(404, 'User not found'));
+        return next(new ApiError('User not found', 404));
     }
 
     const userIsInProfileStarsArr = profile.stars.includes(req.params.userId);
@@ -216,10 +216,10 @@ exports.toggleWatch = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.userId);
 
     if (!profile) {
-        return next(new ApiError(404, notFoundErrorMessage));
+        return next(new ApiError(notFoundErrorMessage, 404));
     }
     if (!user) {
-        return next(new ApiError(404, 'User not found'));
+        return next(new ApiError('User not found', 404));
     }
 
     const userIsInProfileWatchersArr = profile.watchers.includes(req.params.userId);
