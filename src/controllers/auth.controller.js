@@ -9,9 +9,17 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
+  const { userId, password } = req.body;
+  const user = await authService.loginUserWithEmailAndPassword(userId, password);
   const tokens = await tokenService.generateAuthTokens(user);
+  const jwtExpiryMilliseconds = process.env.JWT_EXPIRES_MINUTES * 60 * 1000;
+
+  const cookieOptions = {
+    expires: new Date(Date.now() + jwtExpiryMilliseconds),
+    httpOnly: true,
+    sameSite: 'strict',
+  };
+  res.cookie('jwt', tokens.access.token, cookieOptions);
   res.send({ user, tokens });
 });
 

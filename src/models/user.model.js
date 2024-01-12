@@ -2,9 +2,13 @@ const { Schema, model } = require('mongoose');
 const crypto = require('crypto');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
+// const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 
+const options = {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+};
 const userSchema = new Schema(
   {
     name: {
@@ -80,17 +84,18 @@ const userSchema = new Schema(
       default: false,
     },
   },
-  {
-    timestamps: true,
-  },
+  options
 );
 
 // add plugin that converts mongoose to json
-userSchema.plugin(toJSON);
-userSchema.plugin(paginate);
+// userSchema.plugin(toJSON);
+// userSchema.plugin(paginate);
+
 
 userSchema.index({ name: 1, username: 1, email: 1 });
-
+userSchema.virtual('first_name').get(function () {
+  return this.name.split(' ')[0];
+});
 /**
  * Check if email is taken
  * @param {string} email - The user's email

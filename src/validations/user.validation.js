@@ -38,7 +38,7 @@ const signUpRules = [
 ];
 
 const signInRules = [
-  sanitize.fieldRequired('login', 'Username or email is required'),
+  sanitize.fieldRequired('userId', 'Username or email is required'),
   sanitize.fieldRequired('password', 'Password is required'),
 ];
 
