@@ -141,6 +141,8 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+const updatePasswordWithID = async () => { }
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
@@ -148,5 +150,6 @@ module.exports = {
   resetPassword,
   verifyEmail,
   restrictTo,
-  protect
+  protect,
+  updatePasswordWithID
 };
