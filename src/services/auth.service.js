@@ -109,8 +109,6 @@ const protect = catchAsync(async (req, res, next) => {
     // Remove bearer from token
     // eslint-disable-next-line prefer-destructuring
     token = req.header('Authorization').split(' ')[1];
-    // eslint-disable-next-line no-console
-    console.log("TOKEN_HERE", token)
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -124,8 +122,6 @@ const protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // Get user and check if user still exists
-  // eslint-disable-next-line no-console
-  console.log("DECODED__TOKEN", decoded)
   const user = await User.findById(decoded.sub).select('-created_at -passwordChangedAt');
 
   if (!user) {
