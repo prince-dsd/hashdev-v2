@@ -3,6 +3,7 @@ const { validate } = require('../../middlewares/validate');
 const { authValidation } = require('../../validations');
 const { authController } = require('../../controllers');
 const auth = require('../../middlewares/auth');
+const { authService } = require('../../services');
 
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.post('/forgot-password', validate(authValidation.forgotPassword), authCon
 router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
 router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
+router.use(authService.protect);
+
+router.route('/update-password').patch(validate(authValidation.updatePassword), authController.updatePassword);
 
 module.exports = router;
 
