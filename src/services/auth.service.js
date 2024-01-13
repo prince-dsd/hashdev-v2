@@ -141,7 +141,17 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-const updatePasswordWithID = async () => { }
+const updatePasswordWithID = async (userId, currentPassword, password) => {
+  const user = await User.findById(userId).select('+password');
+  if (!(await user.checkPassword(currentPassword))) {
+    // return next(new AppError('Current password incorrect', 401));
+  }
+  user.password = password;
+  await user.save();
+
+  return user;
+
+}
 
 module.exports = {
   loginUserWithEmailAndPassword,
