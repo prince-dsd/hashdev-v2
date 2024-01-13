@@ -137,6 +137,10 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+userSchema.methods.checkPassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
 userSchema.methods.changedPasswordSinceJWT = function (JWTTimestamp) {
   let hasPasswordChanged = false;
 
