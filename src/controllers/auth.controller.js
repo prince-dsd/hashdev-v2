@@ -27,8 +27,8 @@ const login = catchAsync(async (req, res) => {
 });
 
 const updatePassword = catchAsync(async (req, res) => {
-  const { userId, password } = req.body;
-  const user = await authService.updatePasswordWithID(userId, password)
+  const { currentPassword, password } = req.body;
+  const user = await authService.updatePasswordWithID(req.user.id, currentPassword, password)
   const tokens = await tokenService.generateAuthTokens(user);
   // Create and send JWT
   res.cookie('jwt', tokens.access.token, cookieOptions);
