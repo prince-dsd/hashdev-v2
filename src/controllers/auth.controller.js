@@ -1,8 +1,9 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
+const config = require('../config/config');
 
-const jwtExpiryMilliseconds = process.env.JWT_EXPIRES_MINUTES * 60 * 1000;
+const jwtExpiryMilliseconds = config.JWT_ACCESS_EXPIRATION_MINUTES * 60 * 1000;
 
 const cookieOptions = {
   expires: new Date(Date.now() + jwtExpiryMilliseconds),
